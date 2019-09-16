@@ -2,6 +2,7 @@
 Headless Authorization Module for FileMaker
 
 # BetterForms/FileMaker JSON Authorization
+
 Each user has a permissions JSON object stored with their user record in a user table
 {
 	"viewAllReservations": true,
@@ -15,9 +16,13 @@ Each user has a permissions JSON object stored with their user record in a user 
 	"showAdminMenu": true,
 	"...": "..."
 }
+
 Using a custom function in FM, we can check the boolean value of any of these keys before running the script.
 I think that CF should just return a boolean value, errors should be raised manually, but another CF could easily be written to raise a generic “insufficient privileges” error code.
+
+
 ++How to configure that CF to work with any user table??++
+
 The permission object is based on groups with predefined attributes
 {
 	"admin": {
@@ -50,6 +55,7 @@ The permission object is based on groups with predefined attributes
 	},
 	"...": {}
 }
+
 ​
 //Priv Specification
 {
@@ -58,25 +64,32 @@ The permission object is based on groups with predefined attributes
 		"all": "You can't edit all reservations"
 	}
 }
+
 Global script populates a `priv` object with the user’s permissions object
 If [ CheckPriv ( "editReservations" ; "" ) ] #return boolean
 	Set Variable [ $$BF_Actions ; BF_SetAction (show alert = $priv_error) ]
 	Exit Loop If [ True ]
 End If
+
 ​
+```
 If [ not CheckPriv ( "editReservations" ) = "all" ]
 	Set Variable [ $$BF_Actions ; BF_SetAction (show alert = $priv_error) ]
 	Exit Loop If [ True ]
 Else If [ not CheckPriv ( "editReservations" ) = "own" ]
 	CheckPrivError ( "editReservations" ; "own" )
 End If
+```
 ​
 Exit Loop If [ CheckPriv ( "showAdminMenu" ; "" ) ]
 A user can also have custom privileges that can override these default group settings. A FileMaker Custom Function can merge the custom privileges with the group privileges into the user’s JSON object, with the custom settings taking priority
 ++How to verify the default setting for privileges if not set?++
+
 ++How to manage UI for granting/removing privileges so that that when changing privileges leftover custom privileges aren’t ignored?++
+
 In FileMaker, we can easily make a series of tables to easily manage the groups and permission lists. This would allow easy access to add new groups or individual privileges. Scripts would normalize this data into JSON for a solution.
 ​
+
 ## Functions
 `ham_carve (  )` setup
 returns error object if problem
