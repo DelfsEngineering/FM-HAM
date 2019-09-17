@@ -1,5 +1,6 @@
-#### FM-HAM
-Headless Authorization Module for FileMaker
+# FM-HAM
+
+## Headless Authorization Module for FileMaker
 
 # BetterForms/FileMaker JSON Authorization
 
