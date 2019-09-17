@@ -1,6 +1,5 @@
 # FM-HAM
-
-## Headless Authorization Module for FileMaker
+### Headless Authorization Module for FileMaker
 
 FM-HAM is a flexible non opinionated model for managing account authorization. Note: Authorization is what the user can do vs authentication - who the user is.
 
@@ -8,9 +7,28 @@ This module is headless meaning it does not come with a user interface and often
 
 ## Features
 - Non-opinionated
-- 
+- Ability to track numerical as well as boolean priv's
+- permissions can be stacked and overridden
+- No limit the depth of permissions
+- easily pass a permissions object to 3rd party logic such as web interfaces like www.fmBetterForms.com etc.
 
-Each user / entity has a permissions JSON object stored with their user record in a user table
+## Use Cases
+FM-HAM Can be used anywhere you need to control user activities and quantities
+- Contorl number of things a user is allowed to create
+- Control access a user has to an area of an application
+
+## Simple Example ## 
+
+# Overview
+Each user / entity has a permissions JSON object stored with their corresponding record.
+
+
+
+
+## Details
+
+```
+// example
 {
 	"viewAllReservations": true,
 	"viewOwnReservations": true,
@@ -23,6 +41,31 @@ Each user / entity has a permissions JSON object stored with their user record i
 	"showAdminMenu": true,
 	"...": "..."
 }
+```
+
+## Best Practice
+Naming permissions and privs should be as symnatic as poosible. This will allow you and other developers to easily make assumptions as to waht a prive key mean.
+
+Boolean keys should be more truthy than falsey eg 
+
+**Bad names**
+disabled
+accountDisabled
+widgets
+
+**Good Names**
+isActive
+isDisabled
+canAccessThis
+countWidgets
+
+** TODO - Think we may want a math based system for numeric values
+eg: 
+`sumWigets` would add all the sub privs together
+`maxAttempts` would take the maximum of all subs
+etc
+
+
 
 Using a custom function in FM, we can check the boolean value of any of these keys before running the script.
 I think that CF should just return a boolean value, errors should be raised manually, but another CF could easily be written to raise a generic “insufficient privileges” error code.
