@@ -2,9 +2,15 @@
 
 ## Headless Authorization Module for FileMaker
 
-# BetterForms/FileMaker JSON Authorization
+FM-HAM is a flexible non opinionated model for managing account authorization. Note: Authorization is what the user can do vs authentication - who the user is.
 
-Each user has a permissions JSON object stored with their user record in a user table
+This module is headless meaning it does not come with a user interface and often one is not needed. Technically the module is also foot / tailless as well. This means that you can store the raw authorizations JSON objects any way you want but typically they are saved in a single field within your user or entity record.
+
+## Features
+- Non-opinionated
+- 
+
+Each user / entity has a permissions JSON object stored with their user record in a user table
 {
 	"viewAllReservations": true,
 	"viewOwnReservations": true,
