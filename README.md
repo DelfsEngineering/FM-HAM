@@ -11,6 +11,7 @@ This module is headless meaning it does not come with a user interface and often
 - permissions can be stacked and overridden
 - No limit the depth of permissions
 - easily pass a permissions object to 3rd party logic such as web interfaces like www.fmBetterForms.com etc.
+- User it anywhere, including FileMaker record level access
 
 ## Use Cases
 FM-HAM Can be used anywhere you need to control user activities and quantities
@@ -78,6 +79,7 @@ I think that CF should just return a boolean value or a number, errors should be
 `inherit` - array will include the listed group names privs in the specified order
 
 The permission object is based on groups with predefined attributes
+```
 {
 	"admin": {
 		"inherit": ["cage_manager"],
@@ -118,7 +120,9 @@ The permission object is based on groups with predefined attributes
 		"all": "You can't edit all reservations"
 	}
 }
+```
 
+#### Script example psudo code
 ```
 Global script populates a `priv` object with the user’s permissions object
 If [ CheckPriv ( "editReservations" ; "" ) ] #return boolean
