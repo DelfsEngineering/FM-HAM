@@ -49,11 +49,13 @@ Naming permissions and privs should be as symnatic as poosible. This will allow 
 Boolean keys should be more truthy than falsey eg 
 
 **Bad names**
-disabled
-accountDisabled
-widgets
+
+* disabled
+* accountDisabled
+* widgets
 
 **Good Names**
+
 isActive
 isDisabled
 canAccessThis
