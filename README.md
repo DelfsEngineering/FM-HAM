@@ -159,3 +159,8 @@ returns error object if problem
 `CheckCount ( priv ; num )` num or simple string comparator, eg `"<=5"`
 #### Always returns value (string)
 `ReturnPriv ( priv )` 
+
+### TODO's
+- Add demo and integration with and self tests ( all in one)
+- Define the functions needed from a mock example's requirements
+
