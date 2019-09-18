@@ -22,9 +22,6 @@ FM-HAM Can be used anywhere you need to control user activities and quantities
 # Overview
 Each user / entity has a permissions JSON object stored with their corresponding record.
 
-
-
-
 ## Details
 
 ```
@@ -50,16 +47,16 @@ Boolean keys should be more truthy than falsey eg
 
 **Bad names**
 
-* disabled
-* accountDisabled
-* widgets
+`disabled`
+`accountDisabled`
+`widgets`
 
 **Good Names**
 
-isActive
-isDisabled
-canAccessThis
-countWidgets
+`isActive`
+`isDisabled`
+`canAccessThis`
+`countWidgets`
 
 ** TODO - Think we may want a math based system for numeric values
 eg: 
@@ -68,12 +65,17 @@ eg:
 etc
 
 
+#### Concepts
 
-Using a custom function in FM, we can check the boolean value of any of these keys before running the script.
-I think that CF should just return a boolean value, errors should be raised manually, but another CF could easily be written to raise a generic “insufficient privileges” error code.
+Using a custom function in FM, we can check the boolean, or mumeric aggrigate value of any of these keys before running a script.
+
+I think that CF should just return a boolean value or a number, errors should be raised manually, but another CF could easily be written to raise a generic “insufficient privileges” error code.
 
 
 ++How to configure that CF to work with any user table??++
+
+#### Special Keys
+`inherit` - array will include the listed group names privs in the specified order
 
 The permission object is based on groups with predefined attributes
 {
@@ -117,13 +119,16 @@ The permission object is based on groups with predefined attributes
 	}
 }
 
+```
 Global script populates a `priv` object with the user’s permissions object
 If [ CheckPriv ( "editReservations" ; "" ) ] #return boolean
 	Set Variable [ $$BF_Actions ; BF_SetAction (show alert = $priv_error) ]
 	Exit Loop If [ True ]
 End If
+```
 
-​
+
+
 ```
 If [ not CheckPriv ( "editReservations" ) = "all" ]
 	Set Variable [ $$BF_Actions ; BF_SetAction (show alert = $priv_error) ]
@@ -131,9 +136,13 @@ If [ not CheckPriv ( "editReservations" ) = "all" ]
 Else If [ not CheckPriv ( "editReservations" ) = "own" ]
 	CheckPrivError ( "editReservations" ; "own" )
 End If
-```
 ​
 Exit Loop If [ CheckPriv ( "showAdminMenu" ; "" ) ]
+
+```
+
+### Misc Notes to be converted into code
+
 A user can also have custom privileges that can override these default group settings. A FileMaker Custom Function can merge the custom privileges with the group privileges into the user’s JSON object, with the custom settings taking priority
 ++How to verify the default setting for privileges if not set?++
 
