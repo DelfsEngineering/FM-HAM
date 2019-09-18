@@ -17,6 +17,7 @@ This module is headless meaning it does not come with a user interface and often
 FM-HAM Can be used anywhere you need to control user activities and quantities
 - Contorl number of things a user is allowed to create
 - Control access a user has to an area of an application
+- Multi-Tenant verticals, makes managing account attributes a snap
 
 ## Simple Example ## 
 
