@@ -7,22 +7,82 @@ This module is headless meaning it does not come with a user interface and often
 
 ## Features
 - Non-opinionated
-- Ability to track numerical as well as boolean priv's
+- Ability to track numerical, value-based, or boolean priv's
 - permissions can be stacked and overridden
 - No limit the depth of permissions
 - easily pass a permissions object to 3rd party logic such as web interfaces like www.fmBetterForms.com etc.
-- User it anywhere, including FileMaker record level access
+- Use it anywhere, including FileMaker record level access
 
 ## Use Cases
 FM-HAM Can be used anywhere you need to control user activities and quantities
-- Contorl number of things a user is allowed to create
+- Control number of things a user is allowed to create
 - Control access a user has to an area of an application
 - Multi-Tenant verticals, makes managing account attributes a snap
 
 ## Simple Example ## 
 
 # Overview
-Each user / entity has a permissions JSON object stored with their corresponding record.
+Define groups for the privledges within your application. Here is a simple example:
+
+```
+{
+	"admin": {
+		"inherit": ["manager"],
+		"addUsers": true
+	},
+	"manager: {
+		"inherit": ["basic"],
+		"editUsers": true,
+		"sessionLimit": 3
+	},
+	"basic": {
+		"addUsers": false,
+		"editUsers": false,
+		"editOwnDetails": true,
+		"sessionLimit": 1
+	}
+}
+```
+
+To nest privleges, use the `inherit` keyword. Then, you'll only need to define or re-define privledges that are different than what the group is inheriting from.
+
+- `inherit` must be an array of strings that match other group names
+- Inheritance applies in order of the array; groups later in the array will take precedence.
+- Inheritance uses recursion; be careful not to cause an infinite loop!
+
+Each will then have their own user object with the group they belong to, and any user-specefic overrides
+
+```
+{
+	"group": "manager",
+	"overrides": {
+		"sessionLimit": 5
+	}
+}
+```
+
+## Usage
+
+Call the `HAM_Config()` function once per session to setup the privileges for the current user. If we passed in the groups and user definitions above, it would produce the following flattened session object:
+
+```
+{
+	"addUsers": false,
+	"editUsers": true,
+	"editOwnDetails": true,
+	"sessionLimit": 5
+}
+```
+
+Then, you can use the `HAM_CheckPriv()` function to lookup any of these privledges before performing certain actions.
+
+Example:
+```
+HAM_CheckPriv( "addUsers" ; "" ) // will return FALSE
+```
+
+- the `HAM_CheckPriv` function attempts to return the value at the key provided. If it encounters any errors, it will return `False` by default. So name your pr
+
 
 ## Details
 
@@ -49,79 +109,48 @@ Boolean keys should be more truthy than falsey eg
 
 **Bad names**
 
-`disabled`
-`accountDisabled`
-`widgets`
+- `disabled`
+- `accountDisabled`
+- `widgets`
+- `preventGlobalThermonuclarWar`
 
 **Good Names**
 
-`isActive`
-`isDisabled`
-`canAccessThis`
-`countWidgets`
+- `isActive`
+- `isDisabled`
+- `canAccessThis`
+- `countWidgets`
 
-** TODO - Think we may want a math based system for numeric values
-eg: 
-`sumWigets` would add all the sub privs together
-`maxAttempts` would take the maximum of all subs
-etc
+Be sure to make your permissions as permissive as possible. If the `CheckPriv` function fails, it will return `False` by default.
 
 
-#### Concepts
+# Evaulations
 
-Using a custom function in FM, we can check the boolean, or mumeric aggrigate value of any of these keys before running a script.
+If you add `_eval` to the end of any privledge name, the result of that privledge will be evalutated using FileMaker's `Evaluate()` function whenever it's checked by the `HAM_CheckPriv()` function. That means you can take advantage of local variables or even SQL Lookups within those calculations.
 
-I think that CF should just return a boolean value or a number, errors should be raised manually, but another CF could easily be written to raise a generic “insufficient privileges” error code.
-
-
-++How to configure that CF to work with any user table??++
-
-#### Special Keys
-`inherit` - array will include the listed group names privs in the specified order
-
-The permission object is based on groups with predefined attributes
+In this simple example, the `editRooms` priviledge will only be true on Mondays.
 ```
-{
-	"admin": {
-		"inherit": ["cage_manager"],
-		"showAdminMenu": true,
-		"notifyManagerUponApprove": false,
-		"notifyManagerUponUnlock": false,
-	},
-	"cage_manager": {
-		"inherit": ["student"],
-		"viewReservations": "all",
-		"editReservations": "all",
-		"inOut": true,
-		"editReservations": "always",
-		"approveReservations": true,
-		"notifyManagerUponApprove": true,
-		"unlockReservations": true,
-		"notifyManagerUponUnlock": true,
-		"newWidget1": true
-	},
-	"student": {
-		"viewReservations": "own",
-		"editReservations": "own",
-		"inOut": false,
-		"approveReservations": false,
-		"notifyManagerUponApprove": false,
-		"unlockReservations": false,
-		"notifyManagerUponUnlock": false,
-		"showAdminMenu": false,
-	},
-	"...": {}
-}
-
-​
-//Priv Specification
-{
-	"editAllReservations": {
-		"own": "You can only edit your own reservations",
-		"all": "You can't edit all reservations"
-	}
-}
+"editRooms_eval": "Get ( DayOfWeek ) = 2",
 ```
+
+# Options & Defaults
+
+Various options can be passed to the `Setup` and `CheckPriv` functions to modify the behavior of HAM. The options are passed as a JSON object as the last parameter of these functions.
+
+### `HAM_Config` Options
+
+**evaluateNow** (boolean, defaults `False`) - Run all of the `_eval` privildeges during setup instead of each time the privledge is checked. This is helpful if you have a lot of calulations or if they take a long time to run.
+
+**storeGlobal** (boolean, defaults `True`) - If this is set to `False`, the $$HAM_Config global variable will never be stored in FileMaker's memory. This can make HAM more secure, but also may run more slowly since the Setup will be run each time `HAM_CheckPriv()` is called.
+
+### `HAM_CheckPriv` Options
+
+**returnError** (boolean, defaults `False`) - If true, the function will return a standard error object if an error occured (instead of the default `False`). You can also always check the `$$HAM_LastError` variable to see if any errors occcured. With this enabled, if no errors occur, the value from the flat object of privileges is still returned.
+
+### Default Configuration
+
+You can edit the default configuration for the `HAM_Config` function. These settings will act like the normal parameters of the function if the functino is run with blank parameters, or if the CheckPriv function runs befor the Config function.
+
 
 #### Script example psudo code
 ```
@@ -154,18 +183,3 @@ A user can also have custom privileges that can override these default group set
 ++How to manage UI for granting/removing privileges so that that when changing privileges leftover custom privileges aren’t ignored?++
 
 In FileMaker, we can easily make a series of tables to easily manage the groups and permission lists. This would allow easy access to add new groups or individual privileges. Scripts would normalize this data into JSON for a solution.
-​
-
-## Functions
-`ham_carve (  )` setup
-returns error object if problem
-#### Always returns boolean
-`CheckPriv ( priv )`
-`CheckCount ( priv ; num )` num or simple string comparator, eg `"<=5"`
-#### Always returns value (string)
-`ReturnPriv ( priv )` 
-
-### TODO's
-- Add demo and integration with and self tests ( all in one)
-- Define the functions needed from a mock example's requirements
-
