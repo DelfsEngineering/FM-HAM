@@ -81,26 +81,7 @@ Example:
 HAM_CheckPriv( "addUsers" ; "" ) // will return FALSE
 ```
 
-- the `HAM_CheckPriv` function attempts to return the value at the key provided. If it encounters any errors, it will return `False` by default. So name your pr
-
-
-## Details
-
-```
-// example
-{
-	"viewAllReservations": true,
-	"viewOwnReservations": true,
-	"editAllReservations": false,
-	"editOwnReservations": true,
-	"editEquipment": false,
-	"editRooms_eval": "Get ( DayOfWeek ) = 2", # evalutated every time editRooms is checked
-	"editAnnoucments": false,
-	"editOtherUsers": false,
-	"showAdminMenu": true,
-	"...": "..."
-}
-```
+- the `HAM_CheckPriv` function attempts to return the value at the key provided. If it encounters any errors, it will return `False` by default. 
 
 ## Best Practice
 Naming permissions and privs should be as symnatic as poosible. This will allow you and other developers to easily make assumptions as to waht a prive key mean.
