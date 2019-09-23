@@ -122,11 +122,15 @@ Various options can be passed to the `Setup` and `CheckPriv` functions to modify
 
 **evaluateNow** (boolean, defaults `False`) - Run all of the `_eval` privildeges during setup instead of each time the privledge is checked. This is helpful if you have a lot of calulations or if they take a long time to run.
 
-**storeGlobal** (boolean, defaults `True`) - If this is set to `False`, the $$HAM_Config global variable will never be stored in FileMaker's memory. This can make HAM more secure, but also may run more slowly since the Setup will be run each time `HAM_CheckPriv()` is called.
+**storeGlobal** (boolean, defaults `True`) - If this is set to `False`, the $$HAM_Config global variable will never be stored in FileMaker's memory. This can make HAM more secure, but also may run more slowly since the Setup will be run each time `HAM_CheckPriv()` is called. To use it, you **must** have a default configuration setup in the `HAM_Config` function, then only call the `HAM_CheckPriv` function.
+
+**encryptionKey** (string, no default) - If set, this will encrypt the entire $$HAM_Config global variable so that it cannot be modified by end users. You will need to pass in the encryption key each time you use the `HAM_CheckPriv` function.
 
 ### `HAM_CheckPriv` Options
 
 **returnError** (boolean, defaults `False`) - If true, the function will return a standard error object if an error occured (instead of the default `False`). You can also always check the `$$HAM_LastError` variable to see if any errors occcured. With this enabled, if no errors occur, the value from the flat object of privileges is still returned.
+
+**encryptionKey** (string, no default) - If set, it will use this key to decrypt the data stored in the $$HAM_Config global variable.
 
 ### Default Configuration
 
