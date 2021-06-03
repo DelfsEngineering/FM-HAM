@@ -31,7 +31,7 @@ Define groups for the privileges within your application. Here is a simple examp
 		"addUsers": true
 	},
 	"manager": {
-		"inherit": ["basicUser****"],
+		"inherit": ["basicUser"],
 		"editUsers": true,
 		"sessionLimit": 3
 	},
