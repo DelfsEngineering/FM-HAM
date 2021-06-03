@@ -31,11 +31,11 @@ Define groups for the privileges within your application. Here is a simple examp
 		"addUsers": true
 	},
 	"manager: {
-		"inherit": ["basic"],
+		"inherit": ["basicUser****"],
 		"editUsers": true,
 		"sessionLimit": 3
 	},
-	"basic": {
+	"basicUser": {
 		"addUsers": false,
 		"editUsers": false,
 		"editOwnDetails": true,
@@ -138,7 +138,7 @@ You can edit the default configuration for the `HAM_Config` function. These sett
 
 #### Script example psudo code
 ```
-Global script populates a `priv` object with the user’s permissions object
+# Global script populates a `priv` object with the user’s permissions object
 If [ CheckPriv ( "editReservations" ; "" ) ] #return boolean
 	Set Variable [ $$BF_Actions ; BF_SetAction (show alert = $priv_error) ]
 	Exit Loop If [ True ]
