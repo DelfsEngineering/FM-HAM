@@ -26,22 +26,27 @@ Define groups for the privileges within your application. Here is a simple examp
 
 ```
 {
-	"admin": {
-		"inherit": ["manager"],
-		"addUsers": true
-	},
-	"manager": {
-		"inherit": ["basicUser"],
-		"editUsers": true,
-		"sessionLimit": 3
-	},
-	"basicUser": {
-		"addUsers": false,
-		"editUsers": false,
-		"editOwnDetails": true,
-		"sessionLimit": 1
-	}
+  "basicUser": {
+       "addUsers": false,
+       "editUsers": false,
+       "editOwnDetails": true,
+       "widgetsAllowed": 1
+  },
+  "manager": {
+       "inherit": [
+         "basicUser"
+       ],
+       "editUsers": true,
+       "widgetsAllowed": 3
+  },
+  "admin": {
+       "inherit": [
+         "manager"
+       ],
+       "addUsers": true
+  }
 }
+
 ```
 
 To nest privileges, use the `inherit` keyword. Then you'll only need to define or re-define privileges that are different than what the group is inheriting from.
