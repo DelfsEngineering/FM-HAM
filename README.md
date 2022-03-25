@@ -97,7 +97,7 @@ Boolean keys should be more truthy than falsy eg
 - `disabled`
 - `accountDisabled`
 - `widgets`
-- `preventGlobalThermonuclarWar`
+- `preventGlobalThermoNuclearWar`
 
 **Good Names**
 
