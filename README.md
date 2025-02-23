@@ -3,7 +3,7 @@
 
 FM-HAM is a flexible non opinionated model for managing account authorization. Note: Authorization is what the user can do vs authentication - who the user is.
 
-This module is headless meaning it does not come with a user interface and often one is not needed. Technically the module is also foot / tailless as well. This means that you can store the raw authorization JSON objects any way you want but typically they are saved in a single field within your user or entity record.
+This module is headless, meaning it does not come with a user interface and is often unnecessary. Technically the module is also foot / tailless as well. This means that you can store the raw authorization JSON objects any way you want but typically they are saved in a single field within your user or entity record.
 
 ## Features
 - Non-opinionated
@@ -11,11 +11,11 @@ This module is headless meaning it does not come with a user interface and often
 - Permissions can be stacked and overridden
 - No limit the depth of permissions
 - Easily pass a permissions object to 3rd party logic such as web interfaces like www.fmBetterForms.com etc.
-- Use it anywhere, including FileMaker record level access
+- Use it anywhere, including FileMaker record-level access
 
 ## Use Cases
 FM-HAM can be used anywhere you need to control user activities and quantities
-- Control number of things a user is allowed to create
+- Control the number of things a user is allowed to create
 - Control access a user has to an area of an application
 - Multi-tenant verticals, makes managing account attributes a snap
 
@@ -58,6 +58,7 @@ To nest privileges, use the `inherit` keyword. Then you'll only need to define o
 Each user will then have their own user object with the group they belong to, and any user-specific overrides
 
 ```
+// HAM user object
 {
 	"group": "manager",
 	"overrides": {
@@ -71,6 +72,7 @@ Each user will then have their own user object with the group they belong to, an
 Call the `HAM_Config()` function once per session to setup the privileges for the current user. If we passed in the groups and user definitions above, it would produce the following flattened session object:
 
 ```
+// HAM flat object 
 {
 	"addUsers": false,
 	"editUsers": true,
@@ -126,7 +128,7 @@ Various options can be passed to the `Setup` and `CheckPriv` functions to modify
 
 **evaluateNow** (boolean, defaults `False`) - Run all of the `_eval` privileges during setup instead of each time the privilege is checked. This is helpful if you have a lot of calculations or if they take a long time to run.
 
-**storeGlobal** (boolean, defaults `True`) - If this is set to `False`, the $$HAM_Config global variable will never be stored in FileMaker's memory. This can make HAM more secure, but may also run more slowly since the `Setup` will be run each time `HAM_CheckPriv()` is called. To use it, you **must** have a default configuration setup in the `HAM_Config` function, then only call the `HAM_CheckPriv` function.
+**storeGlobal** (boolean, defaults `True`) - If this is set to `false`, the $$HAM_Config global variable will never be stored in FileMaker's memory. This can make HAM more secure, but may also run more slowly since the `Setup` will be run each time `HAM_CheckPriv()` is called. To use it, you **must** have a default configuration setup in the `HAM_Config` function, then only call the `HAM_CheckPriv` function.
 
 **encryptionKey** (string, no default) - If set, this will encrypt the entire $$HAM_Config global variable so that it cannot be modified by end users. You will need to pass in the encryption key each time you use the `HAM_CheckPriv` function.
 
