@@ -146,7 +146,7 @@ A multipurpose utility function used internally by both `HAM_Config` and `HAM_Ch
 - **"JSON.IsValid"**\
   Validates whether a JSON string is correctly formatted.
 - **"\_buildPrivSet"** & **"buildPrivSet"**\
-  Recursively builds a flattened privilege set by merging inherited privileges.
+  Recursively builds a flattened privilege set by merging inherited privileges. Be cautious when defining inherited privileges, as circular references can create infinite loops.
 - **"objectAssign"**\
   Merges two JSON objects. Keys ending with `_max` or `_sum` are combined using the appropriate FileMaker functions (Max or Sum).
 - **"stripMath"**\
